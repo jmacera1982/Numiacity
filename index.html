@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Numiacity - Salud y Farmacia</title>
     <meta name="description" content="Numiacity - Tu farmacia y centro de salud integral. Medicamentos, servicios de salud, vacunación y más.">
-    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -38,6 +38,91 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      padding: 20px;
+    }
+    .boton-fecha {
+      background-color: #ed7a1a;
+      color: white;
+      font-weight: 500;
+      padding: 0.5rem 0.5rem;
+      border-radius: 0.5rem;
+      transition: background-color 0.2s ease;
+      margin-top: 20px;
+    }
+    .boton-fecha:hover {
+      background-color: #de5f0f;
+    }
+    .input-field {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #d1d5db;
+      border-radius: 0.5rem;
+      background-color: #ffffff;
+      color: #333;
+      transition: all 0.2s ease;
+    }
+    .input-field:focus {
+      border-color: #ed7a1a;
+      box-shadow: 0 0 0 2px rgba(237, 122, 26, 0.2);
+      outline: none;
+    }
+    h2, .titulo {
+      text-align: center;
+      color: #ed7a1a;
+      margin-top: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    #formularioInicial, #resultados, #formularioDatos, #bloqueFecha {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+    #formularioInicial {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    #formularioTurno {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    /* Popup */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 800px;
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
         body {
             font-family: 'Inter', system-ui, sans-serif;
         }
@@ -153,9 +238,7 @@
              <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">
                  Conocé nuestros servicios de salud
              </h2>
-             <button class="btn-primary" onclick="showForm()">
-                 Reservá tu turno online para servicios de salud
-            </button>
+       
  
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                  <!-- Reserva de Turnos -->
@@ -166,7 +249,7 @@
                          <p class="text-gray-600 mb-4">
                              Aplicación de Vacunas, Toma de presión, Medición IMC, Oximetría, curaciones y mucho más.
                          </p>
-                     <button class="btn-primary" onclick="showForm()">
+                     <button class="btn-primary" "  onclick="cargarCombosDesdeAPI()">
                              Quiero reservar un turno.
                          </button>
                      </div>
@@ -199,7 +282,7 @@
                  </div>
  
                  <!-- Buscador de Sucursales -->
-                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                 <!--div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
                      <div class="text-center">
                          <i data-lucide="map-pin" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
                          <h3 class="text-xl font-semibold mb-2 text-gray-800">Buscador de Sucursales y Servicios</h3>
@@ -210,10 +293,10 @@
                              Conocé nuestras sucursales
                          </button>
                      </div>
-                 </div>
+                 </div-->
  
                  <!-- Fiebre Amarilla -->
-                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                 <!--div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
                      <div class="text-center">
                          <i data-lucide="syringe" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
                          <h3 class="text-xl font-semibold mb-2 text-gray-800">¡NUEVO! Vacunate contra la Fiebre Amarilla</h3>
@@ -224,12 +307,12 @@
                              Quiero reservar un turno
                          </button>
                      </div>
-                 </div>
+                 </div-->
  
        
  
                  <!-- Cannabis Medicinal -->
-                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                 <!--div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
                      <div class="text-center">
                          <i data-lucide="sprout" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
                          <h3 class="text-xl font-semibold mb-2 text-gray-800">Cannabis de uso Medicinal en Numiacity</h3>
@@ -240,7 +323,7 @@
                              Conocé todos los servicios
                          </button>
                      </div>
-                 </div>
+                 </div-->
              </div>
  
              <div class="text-center mt-12">
@@ -260,7 +343,7 @@
                         ¿Ya estás en Numiacity?
                     </h2>
                     <p class="text-xl text-gray-600 mb-8">
-                        Si ya llegaste a nuestra sucursal, haz clic en el botón para notificar que estás presente y te atenderemos lo antes posible.
+                        Si ya llegaste a nuestra sucursal a retirar tu pedido, haz clic en el botón para notificar que estás presente y te atenderemos lo antes posible.
                     </p>
                 </div>
                 
@@ -287,16 +370,13 @@
                         <ul class="space-y-2 text-gray-600">
                             <li class="flex items-center">
                                 <i data-lucide="user" class="w-5 h-5 text-primary-500 mr-2"></i>
-                                DNI válido
+                                DNI para comprobar que sos vos
                             </li>
                             <li class="flex items-center">
                                 <i data-lucide="phone" class="w-5 h-5 text-primary-500 mr-2"></i>
-                                Teléfono activo
+                                Número de orden
                             </li>
-                            <li class="flex items-center">
-                                <i data-lucide="mail" class="w-5 h-5 text-primary-500 mr-2"></i>
-                                Email válido
-                            </li>
+                           
                         </ul>
                     </div>
                 </div>
@@ -393,6 +473,41 @@
         </div>
     </section>
 
+    
+<div id="popupModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="document.getElementById('popupModal').style.display='none'">&times;</span>
+    <div>
+         <h3 class='titulo'>Seleccione una agenda</h3>
+    </div>
+    <div id="formularioInicial">
+
+
+
+      <div align="center">      <!--label for="sucuCombo">Selecciona una sucursal:</label-->
+        <select id="sucuCombo" required><option value="">Cargando opciones...</option></select>
+      </div>
+      <div>
+    
+        <!--label for="salaCombo">Selecciona una sala:</label-->
+      <select id="salaCombo" required><option value="">Cargando opciones...</option></select>
+      </div>
+</div>
+
+        <!--div align="center">
+        <button type="button" class="boton-fecha" onclick="cargarCombosDesdeAPI()">Buscar</button>
+      </div-->
+      <div id="bloqueFecha" style="display: none;">
+        <label for="fecha">Seleccione una fecha: </label>
+        <input type="text" id="fecha" placeholder="Elige una fecha" />
+      </div>
+    
+    <div id="resultados" class="flex flex-wrap gap-3 justify-center my-4"></div>
+    <div id="formularioDatos" style="display: none;"></div>
+    <div id="final"></div>
+  </div>
+</div>
+</div>
   
     <!-- Modal Form -->
     <div id="formModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
@@ -531,8 +646,18 @@
             </div>
         </div>
     </footer>
-
+ <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+
+
+
+
+        // Aquí va el JS de reservas, igual al que ya tienes, recortado para simplicidad
+document.addEventListener('click', function(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.style.display = 'none';
+  }
+});
         // Inicializar iconos de Lucide
         lucide.createIcons();
 
@@ -579,7 +704,7 @@
             };
 
             try {
-                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/11393/branch/10588/enqueue', {
+                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/11392/branch/10588/enqueue', {
                     method: 'POST',
                     headers: {
                         'x-api-token': 'iyAUHKKJ2NTsxf4sAH1OWm3fljRsThvxF0kbCGWe',
@@ -617,18 +742,18 @@
             btn.disabled = true;
 
             try {
-                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/11393/branch/10588/enqueue', {
+                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/15055/branch/10588/enqueue', {
                     method: 'POST',
                     headers: {
                         'x-api-token': 'iyAUHKKJ2NTsxf4sAH1OWm3fljRsThvxF0kbCGWe',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        firstName: "Juan",
-                        lastName: "Perez",
-                        dni: "12345678",
-                        email: "mail@mail.com",
-                        phone: "12345678"
+                        firstName: "Jorge",
+                        lastName: "Macera",
+                        dni: "29328703",
+                        email: "jmacera@gmail.com",
+                        phone: "1558668241"
                     })
                 });
 
@@ -658,18 +783,18 @@
             btn.disabled = true;
 
             try {
-                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/11393/branch/10588/enqueue', {
+                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/15055/branch/10588/enqueue', {
                     method: 'POST',
                     headers: {
                         'x-api-token': 'iyAUHKKJ2NTsxf4sAH1OWm3fljRsThvxF0kbCGWe',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        firstName: "Juan",
-                        lastName: "Perez",
-                        dni: "12345678",
-                        email: "mail@mail.com",
-                        phone: "12345678"
+                    firstName: "Jorge",
+                        lastName: "Macera",
+                        dni: "29328703",
+                        email: "jmacera@gmail.com",
+                        phone: "1558668241"
                     })
                 });
 
@@ -760,6 +885,226 @@
                 hideForm();
             }
         });
+
+ let fechaSeleccionadaGlobal = null;
+    let duracionSeleccionadaGlobal = null;
+
+    flatpickr("#fecha", {
+      dateFormat: "Y-m-d",
+      minDate: "today", // evitar fechas anteriores
+      onChange: function(selectedDates, dateStr) {
+        if (selectedDates.length > 0) {
+          consultarDisponibilidad(dateStr);
+        }
+      }
+    });
+
+    async function consultarDisponibilidad(strDate) {
+      const resultados = document.getElementById("resultados");
+      resultados.innerHTML = "Consultando disponibilidad...";
+
+      const baseUrl = "https://citas2.debmedia.com/api/v2/schedules";
+      const strDateEncoded = encodeURIComponent(strDate);
+      const branchId = document.getElementById("sucuCombo").value;
+      const scheduleId = document.getElementById("salaCombo").value;
+      const url = `${baseUrl}/${scheduleId}/branch/${branchId}/availability?strDate=${strDateEncoded}`;
+
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "x-api-token": "KiULvyuin6xWlicdccn3b9vgerWpM7kB1dAWhaqi"
+          }
+        });
+
+        if (!response.ok) throw new Error("Error en la solicitud: " + response.status);
+        const data = await response.json();
+
+        const dias = Array.isArray(data) ? data : (Array.isArray(data.slots) ? data.slots : []);
+
+        if (dias.length === 0) {
+          resultados.innerHTML = "No hay horarios disponibles para esta fecha.";
+          return;
+        }
+
+        let html = "<div><h3 class='titulo'>Horarios disponibles:</h3></div>";
+        html+="<div>"
+        dias.forEach(dia => {
+          const horaMinuto = dia.zonedStartDate.substring(11, 16);
+          html += `&nbsp<button class="boton-fecha" onclick="mostrarFormulario('${dia.zonedStartDate}', ${dia.defaultDuration})">${horaMinuto}</button>&nbsp`;
+        });
+          html+="</div>"
+        resultados.innerHTML = html;
+
+      } catch (err) {
+        console.error("Error atrapado:", err);
+        resultados.innerHTML = `<strong>Error:</strong> ${err.message}`;
+      }
+    }
+
+    function mostrarFormulario(fecha, duracion) {
+      fechaSeleccionadaGlobal = fecha;
+      duracionSeleccionadaGlobal = duracion;
+
+      const resultados = document.getElementById("formularioDatos");
+	document.getElementById("formularioDatos").style.display = "block";
+
+	//document.getElementById("bloqueFecha").style.display = "none";
+	//document.getElementById("formularioInicial").style.display = "none";
+
+	document.getElementById("resultados").style.display = "none";
+
+
+      let html = `
+        <h3 class='titulo'>Completa tus datos</h3>
+        <form id="formularioTurno" onsubmit="return enviarFormulario(event)">
+          <label>Nombre:</label>
+          <input type="text" id="nombre" required>
+          <label>Apellido:</label>
+          <input type="text" id="apellido" required>
+          <label>RUT:</label>
+          <input type="text" id="dni" required>
+          <label>Email:</label>
+          <input type="email" id="email" required>
+          <label>Motivo:</label>
+          <select id="motivo" required>
+            <option value="">Seleccionar...</option>
+            <option value="Consulta general">Consulta general</option>
+            <option value="Revisión">Revisión</option>
+            <option value="Control de tratamiento">Control de tratamiento</option>
+          </select>
+          <br><br>
+          <button type="submit" class="boton-fecha">Confirmar Turno</button>
+        </form>
+      `;
+      resultados.innerHTML = html;
+    }
+
+    function enviarFormulario(event) {
+      event.preventDefault();
+      const datos = {
+        nombre: document.getElementById("nombre").value,
+        apellido: document.getElementById("apellido").value,
+        dni: parseInt(document.getElementById("dni").value),
+        email: document.getElementById("email").value,
+        motivo: document.getElementById("motivo").value
+      };
+
+      crearCita(fechaSeleccionadaGlobal, duracionSeleccionadaGlobal, datos);
+    }
+
+    async function crearCita(fechaInicio, duracionMinutos, datosCliente) {
+      const resultados = document.getElementById("final");
+
+      const startDate = new Date(fechaInicio);
+      const endDate = new Date(startDate.getTime() + duracionMinutos * 60000);
+
+      const pad = n => n.toString().padStart(2, '0');
+        resultados.innerHTML = `1`;
+      function formatISO(date) {
+        const yyyy = date.getFullYear();
+        const MM = pad(date.getMonth() + 1);
+        const dd = pad(date.getDate());
+        const hh = pad(date.getHours());
+        const mm = pad(date.getMinutes());
+        return `${yyyy}-${MM}-${dd}T${hh}:${mm}:00-0300`;
+      }
+
+      const startAt = formatISO(startDate);
+      const endAt = formatISO(endDate);
+
+      const data = {
+        branch: { id:  document.getElementById("sucuCombo").value },
+        schedule: { id:  document.getElementById("salaCombo").value },
+        startAt: startAt,
+        endAt: endAt,
+        customer: {
+          firstName: datosCliente.nombre,
+          lastName: datosCliente.apellido,
+          dni: datosCliente.dni
+         // email: datosCliente.email
+        },
+        reason: datosCliente.motivo
+      };
+      try {
+        const response = await fetch("https://citas2.debmedia.com/api/v2/appointments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-token": "KiULvyuin6xWlicdccn3b9vgerWpM7kB1dAWhaqi"
+          },
+          body: JSON.stringify(data)
+        });
+
+
+        const resultado = await response.json();
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${resultado.message || JSON.stringify(resultado)}`);
+        }
+
+
+
+document.getElementById("formularioDatos").style.display = "none";
+        resultados.innerHTML = `<strong>✅ La reserva fue creada correctamente. ID: ${resultado.id}</strong>`;
+
+      } catch (error) {
+        console.error("Error:", error);
+        resultados.innerHTML = `<strong>❌ Error al generar la cita:</strong> ${error.message}`;
+      }
+    }
+
+
+async function cargarCombosDesdeAPI() {
+  const salaCombo = document.getElementById("salaCombo");
+  const sucuCombo = document.getElementById("sucuCombo");
+
+ 
+
+
+
+ 
+  const url = `https://citas2.debmedia.com/api/v2/reducedSchedules`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "x-api-token": "vnh1jkx3ay4eLREiVnT5MH9RENkT8tuWDjAIBe2E"
+      }
+    });
+
+    if (!response.ok) throw new Error("No se pudo cargar la lista de salas");
+    const data = await response.json();
+
+    salaCombo.innerHTML = '<option value="">Seleccionar sala...</option>';
+    sucuCombo.innerHTML = '<option value="">Seleccionar sucursal...</option>';
+
+    const addedBranchIds = new Set();
+document.getElementById("bloqueFecha").style.display = "block";
+    data.forEach(sala => {
+      salaCombo.innerHTML += `<option value="${sala.id}">${sala.name}</option>`;
+
+      if (Array.isArray(sala.branches)) {
+        sala.branches.forEach(branch => {
+          if (!addedBranchIds.has(branch.id)) {
+            sucuCombo.innerHTML += `<option value="${branch.id}">${branch.name}</option>`;
+            addedBranchIds.add(branch.id);
+          }
+        });
+      }
+    });
+    document.getElementById('popupModal').style.display='block';
+
+  } catch (err) {
+    console.error("Error al cargar combos:", err);
+    salaCombo.innerHTML = `<option value="">Error cargando salas</option>`;
+    sucuCombo.innerHTML = `<option value="">Error cargando sucursales</option>`;
+  }
+}
+
+
+        
     </script>
 </body>
 </html> 
