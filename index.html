@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numiacity - Salud y Farmacia</title>
+    <meta name="description" content="Numiacity - Tu farmacia y centro de salud integral. Medicamentos, servicios de salud, vacunación y más.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+         <script>
+         tailwind.config = {
+             theme: {
+                 extend: {
+                     colors: {
+                         primary: {
+                             50: '#fef7ee',
+                             100: '#fdedd6',
+                             200: '#fad7ac',
+                             300: '#f6bb77',
+                             400: '#f1953a',
+                             500: '#ed7a1a',
+                             600: '#de5f0f',
+                             700: '#b8470f',
+                             800: '#933a13',
+                             900: '#773214',
+                         }
+                     }
+                 }
+             }
+         }
+     </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+                 .btn-primary {
+             @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200;
+         }
+         
+         .btn-secondary {
+             @apply bg-white hover:bg-gray-50 text-primary-500 border border-primary-500 font-medium py-3 px-6 rounded-lg transition-colors duration-200;
+         }
+        
+        .card {
+            @apply bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200;
+        }
+        
+        .input-field {
+            @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="images/Numiacity.png" alt="Numiacity Logo" class="h-8 w-auto mr-3">
+                                         <h1 class="text-2xl font-bold text-primary-500">Numiacity</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="btn-secondary">
+                        <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
+                        Contacto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+              <!-- Hero Section -->
+     <section class="relative bg-gray-100 py-16 overflow-hidden">
+         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+             <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
+                 ¿Qué estás buscando?
+             </h2>
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                 <div class="bg-primary-500 rounded-2xl p-8 text-white group hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                     <i data-lucide="pill" class="w-12 h-12 mx-auto mb-4 text-white group-hover:scale-110 transition-transform duration-300"></i>
+                     <h3 class="text-xl font-semibold mb-2">Medicamentos</h3>
+                     <p class="text-primary-100">Medicamentos bajo receta, venta libre, diabetes care y nutrición infantil</p>
+                 </div>
+                 <div class="bg-primary-500 rounded-2xl p-8 text-white group hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                     <i data-lucide="heart" class="w-12 h-12 mx-auto mb-4 text-white group-hover:scale-110 transition-transform duration-300"></i>
+                     <h3 class="text-xl font-semibold mb-2">Servicios de Salud</h3>
+                     <p class="text-primary-100">Aplicación de vacunas, toma de presión, oximetría y otros.</p>
+                 </div>
+                 <div class="bg-primary-500 rounded-2xl p-8 text-white group hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                     <i data-lucide="shield" class="w-12 h-12 mx-auto mb-4 text-white group-hover:scale-110 transition-transform duration-300"></i>
+                     <h3 class="text-xl font-semibold mb-2">Productos de Salud</h3>
+                     <p class="text-primary-100">Alcohol, Barbijos, Suplementos, Electro Salud, Bienestar Sexual.</p>
+                 </div>
+             </div>
+         </div>
+     </section>
+
+              <!-- Services Section -->
+     <section class="py-16 bg-gray-200">
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">
+                 Conocé nuestros servicios de salud
+             </h2>
+             <p class="text-center text-gray-600 mb-12">
+                 Reservá tu turno online para servicios de salud
+             </p>
+ 
+             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                 <!-- Reserva de Turnos -->
+                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                     <div class="text-center">
+                         <i data-lucide="calendar" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
+                         <h3 class="text-xl font-semibold mb-2 text-gray-800">Reservá tu turno online</h3>
+                         <p class="text-gray-600 mb-4">
+                             Aplicación de Vacunas, Toma de presión, Medición IMC, Oximetría, curaciones y mucho más.
+                         </p>
+                         <button class="btn-primary">
+                             Quiero reservar un turno
+                         </button>
+                     </div>
+                 </div>
+ 
+                 <!-- Gabinetes de Salud -->
+                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                     <div class="text-center">
+                         <i data-lucide="users" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
+                         <h3 class="text-xl font-semibold mb-2 text-gray-800">Conocé nuestros Gabinetes de Salud</h3>
+                         <p class="text-gray-600 mb-4">
+                             Los enfermeros brindan atención primaria y asesoran a pacientes en medicina preventiva.
+                         </p>
+                         <button class="btn-primary" onclick="showForm()">
+                             Conocé más
+                         </button>
+                     </div>
+                 </div>
+ 
+                 <!-- Buscador de Sucursales -->
+                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                     <div class="text-center">
+                         <i data-lucide="map-pin" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
+                         <h3 class="text-xl font-semibold mb-2 text-gray-800">Buscador de Sucursales y Servicios</h3>
+                         <p class="text-gray-600 mb-4">
+                             Encontrá el Numiacity más cercano a tu hogar y consultá por obras sociales y servicios de salud.
+                         </p>
+                         <button class="btn-primary">
+                             Conocé nuestras sucursales
+                         </button>
+                     </div>
+                 </div>
+ 
+                 <!-- Fiebre Amarilla -->
+                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                     <div class="text-center">
+                         <i data-lucide="syringe" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
+                         <h3 class="text-xl font-semibold mb-2 text-gray-800">¡NUEVO! Vacunate contra la Fiebre Amarilla</h3>
+                         <p class="text-gray-600 mb-4">
+                             Ofrecemos certificado oficial de vacunación para poder visitar cualquier país de forma segura.
+                         </p>
+                         <button class="btn-primary">
+                             Quiero reservar un turno
+                         </button>
+                     </div>
+                 </div>
+ 
+                 <!-- Medicina del Viajero -->
+                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                     <div class="text-center">
+                         <i data-lucide="shield" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
+                         <h3 class="text-xl font-semibold mb-2 text-gray-800">¡NUEVO! Asesoramiento en Medicina al viajero</h3>
+                         <p class="text-gray-600 mb-4">
+                             Ofrecemos asesoramiento en salud a todas las personas que quieran viajar por el mundo.
+                         </p>
+                         <button class="btn-primary">
+                             Necesito asesoramiento
+                         </button>
+                     </div>
+                 </div>
+ 
+                 <!-- Cannabis Medicinal -->
+                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                     <div class="text-center">
+                         <i data-lucide="sprout" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
+                         <h3 class="text-xl font-semibold mb-2 text-gray-800">Cannabis de uso Medicinal en Numiacity</h3>
+                         <p class="text-gray-600 mb-4">
+                             Nos comprometemos con el cuidado de la salud y priorizamos el acceso a medicamentos.
+                         </p>
+                         <button class="btn-primary">
+                             Conocé todos los servicios
+                         </button>
+                     </div>
+                 </div>
+             </div>
+ 
+             <div class="text-center mt-12">
+                 <button class="btn-secondary">
+                     Consultá por más servicios profesionales
+                 </button>
+             </div>
+         </div>
+     </section>
+
+    <!-- Product Categories -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">
+                Categorías de Productos de Salud
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Farmacia</h3>
+                    <div class="space-y-2 text-gray-600">
+                        <p>Primeros Auxilios</p>
+                        <p>Diabetes</p>
+                        <p>Óptica</p>
+                        <p>Pediculosis</p>
+                        <p>Pédicos</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Nutrición y Deportes</h3>
+                    <div class="space-y-2 text-gray-600">
+                        <p>Suplementos Dietarios</p>
+                        <p>Suplementos Nutricionales</p>
+                        <p>Suplementos Deportivos</p>
+                        <p>Protección y Recuperación</p>
+                        <p>Fitness</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Electrosalud</h3>
+                    <div class="space-y-2 text-gray-600">
+                        <p>Tensiómetros</p>
+                        <p>Nebulizadores</p>
+                        <p>Balanzas</p>
+                        <p>Termómetros</p>
+                        <p>Almohadillas Térmicas</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Nutrición Infantil</h3>
+                    <div class="space-y-2 text-gray-600">
+                        <p>Leches y Formulas</p>
+                        <p>Alimentos Infantiles</p>
+                        <p>Accesorios</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Bienestar Sexual</h3>
+                    <div class="space-y-2 text-gray-600">
+                        <p>Preservativos</p>
+                        <p>Lubricantes</p>
+                        <p>Estimuladores Sexuales</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Medicamentos</h3>
+                    <div class="space-y-2 text-gray-600">
+                        <p>Analgésicos</p>
+                        <p>Digestivos</p>
+                        <p>Antialérgicos</p>
+                        <p>Gripe y resfrío</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+         <!-- Bottom CTA -->
+     <section class="py-16 bg-primary-500 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-6">
+                Encontrá los medicamentos, servicios y productos de salud que estás buscando.
+            </h2>
+            <p class="text-xl mb-8 text-primary-100">
+                En Numiacity Salud contamos con una amplia gama de suplementos para una nutrición óptima y un bienestar integral. 
+                Te brindamos todo tipo de servicios de salud, desde vacunación y toma de presión hasta oximetría. 
+                Además, nos preocupamos por tu cuidado oral y bienestar sexual, por lo que contamos con productos de alta calidad 
+                para que sigamos cuidandote día tras día.
+            </p>
+                         <button 
+                 class="btn-primary bg-white text-primary-500 hover:bg-gray-100"
+                 onclick="handleEstoyAqui()"
+                 id="estoyAquiBtn"
+             >
+                ¡Estoy aquí!
+            </button>
+        </div>
+    </section>
+
+    <!-- Nueva Sección - Estoy Acá -->
+    <section class="py-16 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="bg-white rounded-2xl shadow-xl p-12 max-w-4xl mx-auto">
+                <div class="mb-8">
+                                         <i data-lucide="map-pin" class="w-16 h-16 text-primary-500 mx-auto mb-6"></i>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                        ¿Ya estás en Numiacity?
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-8">
+                        Si ya llegaste a nuestra sucursal, haz clic en el botón para notificar que estás presente y te atenderemos lo antes posible.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="text-left">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">✅ Beneficios:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
+                                Atención prioritaria
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
+                                Sin esperas innecesarias
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
+                                Servicio personalizado
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Requisitos:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-center">
+                                <i data-lucide="user" class="w-5 h-5 text-primary-500 mr-2"></i>
+                                DNI válido
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="phone" class="w-5 h-5 text-primary-500 mr-2"></i>
+                                Teléfono activo
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="mail" class="w-5 h-5 text-primary-500 mr-2"></i>
+                                Email válido
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button 
+                    class="btn-primary text-lg px-12 py-4 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    onclick="handleEstoyAca()"
+                    id="estoyAcaBtn"
+                >
+                    <i data-lucide="bell" class="w-6 h-6 mr-3"></i>
+                    ¡Estoy acá!
+                </button>
+                
+                <p class="text-sm text-gray-500 mt-4">
+                    Al hacer clic, se enviará tu información al sistema para agilizar tu atención.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Form -->
+    <div id="formModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Reserva tu Turno</h3>
+                <button 
+                    onclick="hideForm()"
+                    class="text-gray-400 hover:text-gray-600"
+                >
+                    ✕
+                </button>
+            </div>
+
+            <div id="message" class="hidden p-4 rounded-lg mb-4"></div>
+
+            <form id="reservaForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre
+                    </label>
+                    <input
+                        type="text"
+                        name="firstName"
+                        required
+                        class="input-field"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Apellido
+                    </label>
+                    <input
+                        type="text"
+                        name="lastName"
+                        required
+                        class="input-field"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        DNI
+                    </label>
+                    <input
+                        type="text"
+                        name="dni"
+                        required
+                        class="input-field"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                        class="input-field"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Teléfono
+                    </label>
+                    <input
+                        type="tel"
+                        name="phone"
+                        required
+                        class="input-field"
+                    />
+                </div>
+
+                <div class="flex space-x-4 pt-4">
+                    <button
+                        type="submit"
+                        class="btn-primary flex-1"
+                        id="submitBtn"
+                    >
+                        Reservar Turno
+                    </button>
+                    <button
+                        type="button"
+                        onclick="hideForm()"
+                        class="btn-secondary flex-1"
+                    >
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Numiacity</h3>
+                    <p class="text-gray-300">
+                        Tu salud es nuestra prioridad. Cuidamos de ti y tu familia.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Servicios</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>Farmacia</li>
+                        <li>Vacunación</li>
+                        <li>Gabinete de Salud</li>
+                        <li>Nutrición</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contacto</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>0800-123-4567</li>
+                        <li>info@numiacity.com</li>
+                        <li>Lun a Dom 8:00 - 22:00</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Seguinos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white">Facebook</a>
+                        <a href="#" class="text-gray-300 hover:text-white">Instagram</a>
+                        <a href="#" class="text-gray-300 hover:text-white">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>&copy; 2024 Numiacity. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // Variables globales
+        let isLoading = false;
+
+        // Funciones para mostrar/ocultar el formulario
+        function showForm() {
+            document.getElementById('formModal').classList.remove('hidden');
+            document.getElementById('message').classList.add('hidden');
+            document.getElementById('reservaForm').reset();
+        }
+
+        function hideForm() {
+            document.getElementById('formModal').classList.add('hidden');
+        }
+
+        // Función para mostrar mensajes
+        function showMessage(text, isError = false) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `p-4 rounded-lg mb-4 ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+            messageDiv.classList.remove('hidden');
+        }
+
+        // Función para manejar el envío del formulario
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            if (isLoading) return;
+            
+            isLoading = true;
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = 'Reservando...';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(event.target);
+            const data = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                dni: formData.get('dni'),
+                email: formData.get('email'),
+                phone: formData.get('phone')
+            };
+
+            try {
+                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/11393/branch/10588/enqueue', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-token': 'iyAUHKKJ2NTsxf4sAH1OWm3fljRsThvxF0kbCGWe',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showMessage('¡Turno reservado exitosamente!');
+                    event.target.reset();
+                    setTimeout(() => {
+                        hideForm();
+                    }, 2000);
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Error al reservar el turno. Por favor, inténtalo de nuevo.', true);
+            } finally {
+                isLoading = false;
+                submitBtn.textContent = 'Reservar Turno';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Función para el botón "Estoy aquí"
+        async function handleEstoyAqui() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const btn = document.getElementById('estoyAquiBtn');
+            btn.textContent = 'Enviando...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/11393/branch/10588/enqueue', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-token': 'iyAUHKKJ2NTsxf4sAH1OWm3fljRsThvxF0kbCGWe',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        firstName: "Juan",
+                        lastName: "Perez",
+                        dni: "12345678",
+                        email: "mail@mail.com",
+                        phone: "12345678"
+                    })
+                });
+
+                if (response.ok) {
+                    alert('¡Notificación enviada exitosamente!');
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al enviar la notificación. Por favor, inténtalo de nuevo.');
+            } finally {
+                isLoading = false;
+                btn.textContent = '¡Estoy aquí!';
+                btn.disabled = false;
+            }
+        }
+
+        // Función para el botón "Estoy acá" (nueva sección)
+        async function handleEstoyAca() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const btn = document.getElementById('estoyAcaBtn');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-6 h-6 mr-3 animate-spin"></i>Enviando...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('https://filavirtual2.debmedia.com/api/v1/queue/11393/branch/10588/enqueue', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-token': 'iyAUHKKJ2NTsxf4sAH1OWm3fljRsThvxF0kbCGWe',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        firstName: "Juan",
+                        lastName: "Perez",
+                        dni: "12345678",
+                        email: "mail@mail.com",
+                        phone: "12345678"
+                    })
+                });
+
+                if (response.ok) {
+                    // Mostrar mensaje de éxito con estilo
+                    showSuccessMessage('¡Perfecto! Ya estás registrado en la cola. Te atenderemos pronto.');
+                    btn.innerHTML = '<i data-lucide="check" class="w-6 h-6 mr-3"></i>¡Enviado!';
+                                         btn.classList.remove('bg-primary-500', 'hover:bg-primary-600');
+                     btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                     
+                     // Resetear después de 3 segundos
+                     setTimeout(() => {
+                         btn.innerHTML = originalContent;
+                         btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                         btn.classList.add('bg-primary-500', 'hover:bg-primary-600');
+                     }, 3000);
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showErrorMessage('Error al enviar la notificación. Por favor, inténtalo de nuevo.');
+            } finally {
+                isLoading = false;
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }
+        }
+
+        // Función para mostrar mensaje de éxito
+        function showSuccessMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+            messageDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="check-circle" class="w-6 h-6 mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(messageDiv);
+            lucide.createIcons();
+
+            // Remover después de 5 segundos
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Función para mostrar mensaje de error
+        function showErrorMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+            messageDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="alert-circle" class="w-6 h-6 mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(messageDiv);
+            lucide.createIcons();
+
+            // Remover después de 5 segundos
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Event listeners
+        document.getElementById('reservaForm').addEventListener('submit', handleSubmit);
+
+        // Cerrar modal al hacer clic fuera de él
+        document.getElementById('formModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideForm();
+            }
+        });
+    </script>
+</body>
+</html> 
