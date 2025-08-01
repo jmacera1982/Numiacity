@@ -110,9 +110,9 @@
              <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">
                  Conocé nuestros servicios de salud
              </h2>
-             <p class="text-center text-gray-600 mb-12">
+             <button class="btn-primary" onclick="showForm()">
                  Reservá tu turno online para servicios de salud
-             </p>
+            </button>
  
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                  <!-- Reserva de Turnos -->
@@ -123,12 +123,24 @@
                          <p class="text-gray-600 mb-4">
                              Aplicación de Vacunas, Toma de presión, Medición IMC, Oximetría, curaciones y mucho más.
                          </p>
-                         <button class="btn-primary">
-                             Quiero reservar un turno
+                     <button class="btn-primary" onclick="showForm()">
+                             Quiero reservar un turno.
                          </button>
                      </div>
                  </div>
- 
+                             <!-- Medicina del Viajero -->
+                  <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
+                      <div class="text-center">
+                          <i data-lucide="shield" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
+                          <h3 class="text-xl font-semibold mb-2 text-gray-800">¡NUEVO! Asesoramiento en Medicina al viajero</h3>
+                          <p class="text-gray-600 mb-4">
+                              Ofrecemos asesoramiento <b>Online</b> a todas las personas que quieran viajar por el mundo.
+                          </p>
+                          <button class="btn-primary" onclick="openViajeroPopup()">
+                              Necesito asesoramiento
+                          </button>
+                      </div>
+                  </div>
                  <!-- Gabinetes de Salud -->
                  <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
                      <div class="text-center">
@@ -171,19 +183,7 @@
                      </div>
                  </div>
  
-                 <!-- Medicina del Viajero -->
-                 <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
-                     <div class="text-center">
-                         <i data-lucide="shield" class="w-12 h-12 text-primary-500 mx-auto mb-4"></i>
-                         <h3 class="text-xl font-semibold mb-2 text-gray-800">¡NUEVO! Asesoramiento en Medicina al viajero</h3>
-                         <p class="text-gray-600 mb-4">
-                             Ofrecemos asesoramiento en salud a todas las personas que quieran viajar por el mundo.
-                         </p>
-                         <button class="btn-primary">
-                             Necesito asesoramiento
-                         </button>
-                     </div>
-                 </div>
+       
  
                  <!-- Cannabis Medicinal -->
                  <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-l-4 border-primary-500">
@@ -207,6 +207,76 @@
              </div>
          </div>
      </section>
+  <!-- Nueva Sección - Estoy Acá -->
+    <section class="py-16 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="bg-white rounded-2xl shadow-xl p-12 max-w-4xl mx-auto">
+                <div class="mb-8">
+                                         <i data-lucide="map-pin" class="w-16 h-16 text-primary-500 mx-auto mb-6"></i>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                        ¿Ya estás en Numiacity?
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-8">
+                        Si ya llegaste a nuestra sucursal, haz clic en el botón para notificar que estás presente y te atenderemos lo antes posible.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="text-left">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">✅ Beneficios:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
+                                Atención prioritaria
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
+                                Sin esperas innecesarias
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
+                                Servicio personalizado
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Requisitos:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-center">
+                                <i data-lucide="user" class="w-5 h-5 text-primary-500 mr-2"></i>
+                                DNI válido
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="phone" class="w-5 h-5 text-primary-500 mr-2"></i>
+                                Teléfono activo
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="mail" class="w-5 h-5 text-primary-500 mr-2"></i>
+                                Email válido
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button 
+                    class="btn-primary text-lg px-12 py-4 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    onclick="handleEstoyAca()"
+                    id="estoyAcaBtn"
+                >
+                    <i data-lucide="bell" class="w-6 h-6 mr-3"></i>
+                    ¡Estoy acá!
+                </button>
+                
+                <p class="text-sm text-gray-500 mt-4">
+                    Al hacer clic, se enviará tu información al sistema para agilizar tu atención.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+
+
 
     <!-- Product Categories -->
     <section class="py-16 bg-white">
@@ -280,95 +350,7 @@
         </div>
     </section>
 
-         <!-- Bottom CTA -->
-     <section class="py-16 bg-primary-500 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold mb-6">
-                Encontrá los medicamentos, servicios y productos de salud que estás buscando.
-            </h2>
-            <p class="text-xl mb-8 text-primary-100">
-                En Numiacity Salud contamos con una amplia gama de suplementos para una nutrición óptima y un bienestar integral. 
-                Te brindamos todo tipo de servicios de salud, desde vacunación y toma de presión hasta oximetría. 
-                Además, nos preocupamos por tu cuidado oral y bienestar sexual, por lo que contamos con productos de alta calidad 
-                para que sigamos cuidandote día tras día.
-            </p>
-                         <button 
-                 class="btn-primary bg-white text-primary-500 hover:bg-gray-100"
-                 onclick="handleEstoyAqui()"
-                 id="estoyAquiBtn"
-             >
-                ¡Estoy aquí!
-            </button>
-        </div>
-    </section>
-
-    <!-- Nueva Sección - Estoy Acá -->
-    <section class="py-16 bg-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="bg-white rounded-2xl shadow-xl p-12 max-w-4xl mx-auto">
-                <div class="mb-8">
-                                         <i data-lucide="map-pin" class="w-16 h-16 text-primary-500 mx-auto mb-6"></i>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">
-                        ¿Ya estás en Numiacity?
-                    </h2>
-                    <p class="text-xl text-gray-600 mb-8">
-                        Si ya llegaste a nuestra sucursal, haz clic en el botón para notificar que estás presente y te atenderemos lo antes posible.
-                    </p>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <div class="text-left">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">✅ Beneficios:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-center">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
-                                Atención prioritaria
-                            </li>
-                            <li class="flex items-center">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
-                                Sin esperas innecesarias
-                            </li>
-                            <li class="flex items-center">
-                                <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2"></i>
-                                Servicio personalizado
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="text-left">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Requisitos:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-center">
-                                <i data-lucide="user" class="w-5 h-5 text-primary-500 mr-2"></i>
-                                DNI válido
-                            </li>
-                            <li class="flex items-center">
-                                <i data-lucide="phone" class="w-5 h-5 text-primary-500 mr-2"></i>
-                                Teléfono activo
-                            </li>
-                            <li class="flex items-center">
-                                <i data-lucide="mail" class="w-5 h-5 text-primary-500 mr-2"></i>
-                                Email válido
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <button 
-                    class="btn-primary text-lg px-12 py-4 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                    onclick="handleEstoyAca()"
-                    id="estoyAcaBtn"
-                >
-                    <i data-lucide="bell" class="w-6 h-6 mr-3"></i>
-                    ¡Estoy acá!
-                </button>
-                
-                <p class="text-sm text-gray-500 mt-4">
-                    Al hacer clic, se enviará tu información al sistema para agilizar tu atención.
-                </p>
-            </div>
-        </div>
-    </section>
-
+  
     <!-- Modal Form -->
     <div id="formModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
@@ -693,24 +675,38 @@
             }, 5000);
         }
 
-        // Función para mostrar mensaje de error
-        function showErrorMessage(message) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300';
-            messageDiv.innerHTML = `
-                <div class="flex items-center">
-                    <i data-lucide="alert-circle" class="w-6 h-6 mr-3"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            document.body.appendChild(messageDiv);
-            lucide.createIcons();
+                 // Función para mostrar mensaje de error
+         function showErrorMessage(message) {
+             const messageDiv = document.createElement('div');
+             messageDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+             messageDiv.innerHTML = `
+                 <div class="flex items-center">
+                     <i data-lucide="alert-circle" class="w-6 h-6 mr-3"></i>
+                     <span>${message}</span>
+                 </div>
+             `;
+             document.body.appendChild(messageDiv);
+             lucide.createIcons();
 
-            // Remover después de 5 segundos
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 5000);
-        }
+             // Remover después de 5 segundos
+             setTimeout(() => {
+                 messageDiv.remove();
+             }, 5000);
+         }
+
+         // Función para abrir popup de Medicina al Viajero
+         function openViajeroPopup() {
+             const url = 'https://filavirtual2.debmedia.com/app/buscar/farmacity?queueName=Asesoramiento en Medicina al Viajero&branchId=10588';
+             const popup = window.open(url, 'ViajeroPopup', 'width=800,height=600,scrollbars=yes,resizable=yes');
+             
+             // Enfocar el popup si se abrió correctamente
+             if (popup) {
+                 popup.focus();
+             } else {
+                 // Si el popup fue bloqueado, mostrar mensaje
+                 showErrorMessage('El popup fue bloqueado. Por favor, permite popups para este sitio.');
+             }
+         }
 
         // Event listeners
         document.getElementById('reservaForm').addEventListener('submit', handleSubmit);
