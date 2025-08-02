@@ -7,8 +7,18 @@
     <meta name="description" content="Numiacity - Tu farmacia y centro de salud integral. Medicamentos, servicios de salud, vacunación y más.">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!-- Tailwind CSS CDN -->
+     
+<script src="https://cdn.jsdelivr.net/gh/debmedia/numiajb-widget@1.0.3/dist/build/static/js/bundle.min.js">
+</script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     
+
+        <script
+  src="https://cdn.jsdelivr.net/gh/logspace-ai/langflow-embedded-chat@v1.0.7/dist/
+build/static/js/bundle.min.js">
+
+</script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -39,6 +49,16 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.JB {
+ position: fixed;
+bottom: 24px;
+right: 24px;
+z-index: 9999;
+
+      }
+
+
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background-color: #f9f9f9;
@@ -473,9 +493,24 @@
         </div>
     </section>
 
-    
+<div class="JB" >
+            <journey-builder-chat
+
+
+          window_title="Asistente de Numiacity"
+    flow_id="4c85bc7b-d5db-4d9a-9f33-98a49009f5e0"
+    host_url="https://journey-builder.desa.numia.co"
+    api_key="sk-wR3w9S-GAm113hLqzySbafdY1Bg2O6gX1OQaJWp9Jcg"
+        chat_position='top-left'
+height=400>
+
+  
+ </journey-builder-chat>
+
+</div>
 <div id="popupModal" class="modal">
-  <div class="modal-content">
+ 
+    <div class="modal-content">
     <span class="close" onclick="document.getElementById('popupModal').style.display='none'">&times;</span>
     <div>
          <h3 class='titulo'>Seleccione una agenda</h3>
@@ -1103,8 +1138,10 @@ document.getElementById("bloqueFecha").style.display = "block";
   }
 }
 
+</script>
 
         
     </script>
+
 </body>
 </html> 
