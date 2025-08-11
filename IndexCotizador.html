@@ -25,6 +25,22 @@
       font-family: 'Hanken Grotesk', sans-serif;
     }
     
+    /* Filter styles */
+    .filter-named, .filter-concurrent, .filter-all {
+      transition: all 0.3s ease;
+    }
+    
+    .filter-named[style*="display: none"], 
+    .filter-concurrent[style*="display: none"] {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    
+    .filter-named, .filter-concurrent, .filter-all {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
 .JB {
  position: fixed;
 bottom: 24px;
@@ -98,7 +114,6 @@ z-index: 9999;
       'Paquetes con hardware (mensual, sujeto a aprobación)',
       'Sucursal virtual — Usuarios nominados (Named)',
       'Sucursal virtual — Usuarios concurrentes',
-      'BOT + Live Agent',
       'Add‑ons por sucursal / compañía',
       'Virtual App — Add‑ons por hora',
       'Servicios profesionales (one‑time)',
@@ -135,11 +150,7 @@ z-index: 9999;
       item('virt_conc_pr', CATEGORIAS[3], 'Numia Virtual User — Professional (Concurrent)',145, 'monthly', {license:true, notes:'88h video y 88h grabación/mes; Citas incluidas'}),
       item('virt_conc_en', CATEGORIAS[3], 'Numia Virtual User — Enterprise (Concurrent)',178, 'monthly', {license:true, notes:'100h video y 100h grabación/mes; AI & Survey incl.'}),
 
-      // BOT + Live Agent (mensual)
-      item('bot_3k', CATEGORIAS[4], 'BOT + Live Agent — hasta 3.000 interacciones (5 agentes chat)',150,'monthly', {license:true}),
-      item('bot_5k', CATEGORIAS[4], 'BOT + Live Agent — hasta 5.000 interacciones (10 agentes chat)',250,'monthly', {license:true}),
-      item('bot_10k',CATEGORIAS[4], 'BOT + Live Agent — hasta 10.000 interacciones (30 agentes chat)',500,'monthly', {license:true}),
-
+     
       // Add-ons por sucursal/compañía (mensual)
       item('addon_citas_named', CATEGORIAS[5], 'Citas por sucursal (Named)',50,'monthly', {license:false}),
       item('addon_citas_conc',  CATEGORIAS[5], 'Citas por sucursal (Concurrent)',63,'monthly', {license:false}),
@@ -187,6 +198,39 @@ z-index: 9999;
     const fmt = (n) => `$${n.toFixed(2)}`;
     const byCat = (cat) => CATALOGO.filter(i => i.category === cat);
 
+    // Filter function for physical branches
+    function applyFilter(filterType) {
+      const filterAll = document.getElementById('filterAll');
+      const filterNamed = document.getElementById('filterNamed');
+      const filterConcurrent = document.getElementById('filterConcurrent');
+      
+      // Reset all button styles
+      [filterAll, filterNamed, filterConcurrent].forEach(btn => {
+        btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors';
+      });
+      
+      // Set active button style
+      if (filterType === 'all') {
+        filterAll.className = 'px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors';
+      } else if (filterType === 'named') {
+        filterNamed.className = 'px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors';
+      } else if (filterType === 'concurrent') {
+        filterConcurrent.className = 'px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors';
+      }
+      
+      // Show/hide rows based on filter
+      const rows = document.querySelectorAll('.filter-named, .filter-concurrent, .filter-all');
+      rows.forEach(row => {
+        if (filterType === 'all') {
+          row.style.display = 'flex';
+        } else if (filterType === 'named') {
+          row.style.display = row.classList.contains('filter-named') ? 'flex' : 'none';
+        } else if (filterType === 'concurrent') {
+          row.style.display = row.classList.contains('filter-concurrent') ? 'flex' : 'none';
+        }
+      });
+    }
+
     function renderCatalog() {
       const cont = document.getElementById('catalogo');
       cont.innerHTML = '';
@@ -196,7 +240,22 @@ z-index: 9999;
         sec.className = 'bg-white rounded-2xl shadow overflow-hidden';
         const head = document.createElement('div');
         head.className = 'px-5 py-4 border-b border-slate-200 flex items-center justify-between';
-        head.innerHTML = `<h2 class="text-base sm:text-lg font-semibold">${cat}</h2>`;
+        
+        // Add filter buttons for physical branches section
+        if (cat === CATEGORIAS[0]) { // Sucursales físicas — Licencias
+          head.innerHTML = `
+            <h2 class="text-base sm:text-lg font-semibold">${cat}</h2>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-slate-600">Filtrar por:</span>
+              <button id="filterAll" class="px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">Todos</button>
+              <button id="filterNamed" class="px-3 py-1.5 text-sm rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors">Named</button>
+              <button id="filterConcurrent" class="px-3 py-1.5 text-sm rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors">Concurrent</button>
+            </div>
+          `;
+        } else {
+          head.innerHTML = `<h2 class="text-base sm:text-lg font-semibold">${cat}</h2>`;
+        }
+        
         sec.appendChild(head);
 
         const list = document.createElement('div');
@@ -205,6 +264,13 @@ z-index: 9999;
         byCat(cat).forEach(it => {
           const row = document.createElement('div');
           row.className = 'p-4 flex flex-col sm:flex-row sm:items-center gap-3';
+          
+          // Add data attributes for filtering
+          const isNamed = it.name.toLowerCase().includes('named');
+          const isConcurrent = it.name.toLowerCase().includes('concurrent');
+          const filterClass = isNamed ? 'filter-named' : (isConcurrent ? 'filter-concurrent' : 'filter-all');
+          
+          row.className += ` ${filterClass}`;
           row.innerHTML = `
             <div class="flex-1">
               <div class="font-medium">${it.name}</div>
@@ -220,6 +286,20 @@ z-index: 9999;
         sec.appendChild(list);
         cont.appendChild(sec);
       });
+
+      // Add filter functionality for physical branches
+      const filterAll = document.getElementById('filterAll');
+      const filterNamed = document.getElementById('filterNamed');
+      const filterConcurrent = document.getElementById('filterConcurrent');
+      
+      if (filterAll && filterNamed && filterConcurrent) {
+        filterAll.addEventListener('click', () => applyFilter('all'));
+        filterNamed.addEventListener('click', () => applyFilter('named'));
+        filterConcurrent.addEventListener('click', () => applyFilter('concurrent'));
+        
+        // Set initial active state
+        applyFilter('all');
+      }
 
       // Bind inputs
       cont.querySelectorAll('input[type=number]').forEach(inp => {
