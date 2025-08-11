@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cotizador Numia</title>
+  <!-- Google Fonts - Hanken Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- jsPDF + autotable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    /* scroll for long sections */
+    .scroll-smooth { scroll-behavior: smooth; }
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Apply Hanken Grotesk font to all elements */
+    * {
+      font-family: 'Hanken Grotesk', sans-serif;
+    }
+    
+.JB {
+ position: fixed;
+bottom: 24px;
+right: 24px;
+z-index: 9999;
+
+      }
+
+
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800" style="font-family: 'Hanken Grotesk', sans-serif;">
+  <header class="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-xl sm:text-2xl font-semibold tracking-tight">Cotizador Numia</h1>
+      <div class="flex items-center gap-3">
+        <label class="text-sm flex items-center gap-2">Cliente
+          <input id="cliente" type="text" placeholder="Nombre de cliente" class="px-3 py-1.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </label>
+        <button id="btnGenerarPDF" class="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-sm">Generar PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- IZQUIERDA: Catálogo -->
+    <section class="lg:col-span-2 space-y-6" id="catalogo">
+      <!-- Secciones renderizadas por JS -->
+    </section>
+
+    <!-- DERECHA: Resumen -->
+    <aside class="lg:col-span-1">
+      <div class="sticky top-20 space-y-6">
+        <div class="bg-white rounded-2xl shadow p-5">
+          <h2 class="text-lg font-semibold mb-3">Resumen</h2>
+          <div class="flex items-center justify-between mb-2">
+            <label class="flex items-center gap-2 text-sm">
+              <input id="chkSandbox" type="checkbox" class="rounded" checked>
+              Aplicar <span class="font-medium">Sandbox 15% (licencias)</span>
+            </label>
+          </div>
+          <div id="resumenItems" class="text-sm divide-y divide-slate-200 mb-3"></div>
+          <dl class="text-sm space-y-1">
+            <div class="flex justify-between"><dt>Subtotal mensual</dt><dd id="subMensual" class="font-medium">$0.00</dd></div>
+            <div class="flex justify-between"><dt>Sandbox 15% (licencias)</dt><dd id="sandboxRow" class="font-medium">$0.00</dd></div>
+            <div class="flex justify-between"><dt>Subtotal único</dt><dd id="subUnico" class="font-medium">$0.00</dd></div>
+            <div class="border-t pt-2 flex justify-between text-base font-semibold"><dt>Total primer mes</dt><dd id="totalPrimerMes">$0.00</dd></div>
+          </dl>
+          <p class="text-xs text-slate-500 mt-3">Notas: precios en USD. Items con “Sujeto a aprobación” pueden variar. SSO se incluye sin costo en contratos ≥ $500 MRR.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-5">
+          <h3 class="text-sm font-semibold mb-2">Notas para la cotización</h3>
+          <textarea id="notas" rows="5" class="w-full rounded-xl border border-slate-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Condiciones, alcance, vigencia, observaciones..."></textarea>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 pb-10 text-xs text-slate-500">
+    Basado en la lista "Precios V2.pdf" provista por el cliente. Este cotizador es de ejemplo y puede ajustarse a nuevas versiones.
+  </footer>
+
+  <script>
+    // ====== Datos base (extraídos del PDF) ======
+    // Helper para crear items
+    const item = (id, category, name, price, charge, opts={}) => ({ id, category, name, price, charge, unit: opts.unit||'unidad', license: !!opts.license, notes: opts.notes||'', flags: opts.flags||[] });
+
+    const CATEGORIAS = [
+      'Sucursales físicas — Licencias',
+      'Paquetes con hardware (mensual, sujeto a aprobación)',
+      'Sucursal virtual — Usuarios nominados (Named)',
+      'Sucursal virtual — Usuarios concurrentes',
+      'BOT + Live Agent',
+      'Add‑ons por sucursal / compañía',
+      'Virtual App — Add‑ons por hora',
+      'Servicios profesionales (one‑time)',
+      'Hardware — Compra',
+      'Hardware — Alquiler (mensual)',
+    ];
+
+    const CATALOGO = [
+      // Sucursales físicas — Licencias (mensual)
+      item('phys_5_named', CATEGORIAS[0], 'Numia App — Hasta 5 usuarios (Named)', 80, 'monthly', {license:true, notes:'Incluye 2 licencias de Numia Sign por sucursal; Trámites ilimitados; Hasta 5 funcionarios'}),
+      item('phys_5_conc',  CATEGORIAS[0], 'Numia App — Hasta 5 usuarios (Concurrent)', 100, 'monthly', {license:true, notes:'Incluye 2 licencias de Numia Sign por sucursal'}),
+      item('phys_10_named',CATEGORIAS[0], 'Numia App — Hasta 10 usuarios (Named)',120, 'monthly', {license:true, notes:'Incluye 3 licencias de Numia Sign por sucursal; Hasta 10 funcionarios'}),
+      item('phys_10_conc', CATEGORIAS[0], 'Numia App — Hasta 10 usuarios (Concurrent)',150, 'monthly', {license:true, notes:'Incluye 3 licencias de Numia Sign por sucursal'}),
+      item('phys_30_named',CATEGORIAS[0], 'Numia App — Hasta 30 usuarios (Named)',270, 'monthly', {license:true, notes:'Incluye 4 licencias de Numia Sign por sucursal; Hasta 30 funcionarios'}),
+      item('phys_30_conc', CATEGORIAS[0], 'Numia App — Hasta 30 usuarios (Concurrent)',338, 'monthly', {license:true, notes:'Incluye 4 licencias de Numia Sign por sucursal'}),
+      item('phys_single_named',CATEGORIAS[0], 'Numia App — Single User (Named)',20, 'monthly', {license:true, notes:'Trámites ilimitados; 1 licencia de cartelería cada 5 usuarios'}),
+      item('phys_single_conc', CATEGORIAS[0], 'Numia App — Single User (Concurrent)',25, 'monthly', {license:true}),
+      item('sign_single', CATEGORIAS[0], 'Numia Sign — Pantalla o Kiosco (por unidad)',25, 'monthly', {license:true}),
+
+      // Paquetes con hardware (mensual, sujeto a aprobación)
+      item('pkg_5',  CATEGORIAS[1], 'Paquete: AIO con impresora + Licencia + Soporte — hasta 5 usuarios',229, 'monthly', {notes:'Sujeto a aprobación'}),
+      item('pkg_10', CATEGORIAS[1], 'Paquete: AIO con impresora + Licencia + Soporte — hasta 10 usuarios',263, 'monthly', {notes:'Sujeto a aprobación'}),
+      item('pkg_30', CATEGORIAS[1], 'Paquete: AIO con impresora + Licencia + Soporte — hasta 30 usuarios',391, 'monthly', {notes:'Sujeto a aprobación'}),
+      item('pkg_sign_player', CATEGORIAS[1], 'Paquete: Cartelería + Player',53, 'monthly', {notes:'Sujeto a aprobación'}),
+
+      // Virtual — Named
+      item('virt_named_st', CATEGORIAS[2], 'Numia Virtual User — Starter (Named)',38, 'monthly', {license:true, notes:'Incluye 40h de video y 40h de grabación/mes'}),
+      item('virt_named_pr', CATEGORIAS[2], 'Numia Virtual User — Professional (Named)',100, 'monthly', {license:true, notes:'Incluye 88h de video y 88h de grabación/mes; Citas incluidas'}),
+      item('virt_named_en', CATEGORIAS[2], 'Numia Virtual User — Enterprise (Named)',123, 'monthly', {license:true, notes:'Incluye 100h de video y 100h de grabación/mes; AI & Survey incl.'}),
+      item('virt_cabin',    CATEGORIAS[2], 'Virtual Cabin',50, 'monthly', {license:false}),
+
+      // Virtual — Concurrent
+      item('virt_conc_st', CATEGORIAS[3], 'Numia Virtual User — Starter (Concurrent)',56, 'monthly', {license:true, notes:'40h video y 40h grabación/mes'}),
+      item('virt_conc_pr', CATEGORIAS[3], 'Numia Virtual User — Professional (Concurrent)',145, 'monthly', {license:true, notes:'88h video y 88h grabación/mes; Citas incluidas'}),
+      item('virt_conc_en', CATEGORIAS[3], 'Numia Virtual User — Enterprise (Concurrent)',178, 'monthly', {license:true, notes:'100h video y 100h grabación/mes; AI & Survey incl.'}),
+
+      // BOT + Live Agent (mensual)
+      item('bot_3k', CATEGORIAS[4], 'BOT + Live Agent — hasta 3.000 interacciones (5 agentes chat)',150,'monthly', {license:true}),
+      item('bot_5k', CATEGORIAS[4], 'BOT + Live Agent — hasta 5.000 interacciones (10 agentes chat)',250,'monthly', {license:true}),
+      item('bot_10k',CATEGORIAS[4], 'BOT + Live Agent — hasta 10.000 interacciones (30 agentes chat)',500,'monthly', {license:true}),
+
+      // Add-ons por sucursal/compañía (mensual)
+      item('addon_citas_named', CATEGORIAS[5], 'Citas por sucursal (Named)',50,'monthly', {license:false}),
+      item('addon_citas_conc',  CATEGORIAS[5], 'Citas por sucursal (Concurrent)',63,'monthly', {license:false}),
+      item('addon_queue_named', CATEGORIAS[5], 'Virtual Queue por sucursal (Named)',50,'monthly', {license:false}),
+      item('addon_queue_conc',  CATEGORIAS[5], 'Virtual Queue por sucursal (Concurrent)',63,'monthly', {license:false}),
+      item('addon_survey_named',CATEGORIAS[5], 'Survey (hasta 20 sucursales) — por compañía (Named)',200,'monthly', {license:false}),
+      item('addon_survey_conc', CATEGORIAS[5], 'Survey (hasta 20 sucursales) — por compañía (Concurrent)',250,'monthly', {license:false}),
+      item('addon_sso', CATEGORIAS[5], 'SSO',100,'monthly', {license:false, notes:'Incluido en contratos ≥ $500 MRR'}),
+
+      // Virtual App — Add-ons por hora (usar horas/mes)
+      item('va_horas_atencion', CATEGORIAS[6], 'Horas de Atención (video) — por hora',0.60,'hourly-monthly', {license:false}),
+      item('va_horas_grab',     CATEGORIAS[6], 'Horas de Grabación — por hora',1.20,'hourly-monthly', {license:false}),
+      item('va_transcripcion',  CATEGORIAS[6], 'Transcripción — por hora',3.83,'hourly-monthly', {license:false}),
+      item('va_speech',         CATEGORIAS[6], 'Speech Analytics — por hora',6.08,'hourly-monthly', {license:false}),
+      item('va_cobrowse',       CATEGORIAS[6], 'Co‑Browsing — por hora',1.60,'hourly-monthly', {license:false, notes:'Requiere ajuste en la web del cliente para conectar con asesor'}),
+      item('va_dev',            CATEGORIAS[6], 'Hora de desarrollo — por hora (mín. paquete de 50h)',50,'hourly-onetime', {license:false}),
+
+      // Servicios profesionales (one-time)
+      item('svc_param_5',   CATEGORIAS[7], 'Parametrización hasta 5 sucursales físicas (10h, uso hasta 1 mes)',700,'onetime'),
+      item('svc_param_25',  CATEGORIAS[7], 'Parametrización hasta 25 sucursales físicas (50h, uso hasta 2 meses)',3500,'onetime'),
+      item('svc_param_100', CATEGORIAS[7], 'Parametrización hasta 100 sucursales físicas (300h, uso hasta 4 meses)',21000,'onetime'),
+
+      // Hardware — Compra (one-time)
+      item('hw_buy_tablet',  CATEGORIAS[8], 'Tótem Tablet — COMPRA',1500,'onetime', {notes:'Soporte mensual de HW opcional $50/disp.'}),
+      item('hw_buy_aio',     CATEGORIAS[8], 'All‑in‑One con impresora — COMPRA',1850,'onetime', {notes:'Soporte mensual de HW opcional $50/disp.'}),
+      item('hw_buy_tkiosk',  CATEGORIAS[8], 'Tótem con pantalla interactiva + gabinete + impresora — COMPRA',2500,'onetime', {notes:'Soporte mensual de HW opcional $50/disp.'}),
+      item('hw_buy_player',  CATEGORIAS[8], 'Digital Media Player — COMPRA',450,'onetime'),
+
+      // Hardware — Alquiler (mensual)
+      item('hw_rent_tablet', CATEGORIAS[9], 'Tótem Tablet — ALQUILER (24mín)',90,'monthly', {notes:'Soporte mensual HW $50/disp.'}),
+      item('hw_rent_aio',    CATEGORIAS[9], 'All‑in‑One con impresora — ALQUILER (24mín)',111,'monthly', {notes:'Soporte mensual HW $50/disp.'}),
+      item('hw_rent_tkiosk', CATEGORIAS[9], 'Tótem con pantalla interactiva + gabinete + impresora — ALQUILER (24mín)',150,'monthly', {notes:'Soporte mensual HW $50/disp.'}),
+      item('hw_rent_player', CATEGORIAS[9], 'Digital Media Player — ALQUILER',32,'monthly'),
+      // Soporte mensual HW explícito
+      item('hw_support',     CATEGORIAS[9], 'Soporte mensual de Hardware (por dispositivo)',50,'monthly')
+    ];
+
+    // ====== Estado ======
+    const state = {
+      qty: new Map(),            // id -> cantidad (o horas)
+      applySandbox: true,
+    };
+
+    // ====== Utilidades ======
+    const fmt = (n) => `$${n.toFixed(2)}`;
+    const byCat = (cat) => CATALOGO.filter(i => i.category === cat);
+
+    function renderCatalog() {
+      const cont = document.getElementById('catalogo');
+      cont.innerHTML = '';
+
+      CATEGORIAS.forEach(cat => {
+        const sec = document.createElement('section');
+        sec.className = 'bg-white rounded-2xl shadow overflow-hidden';
+        const head = document.createElement('div');
+        head.className = 'px-5 py-4 border-b border-slate-200 flex items-center justify-between';
+        head.innerHTML = `<h2 class="text-base sm:text-lg font-semibold">${cat}</h2>`;
+        sec.appendChild(head);
+
+        const list = document.createElement('div');
+        list.className = 'divide-y divide-slate-100';
+
+        byCat(cat).forEach(it => {
+          const row = document.createElement('div');
+          row.className = 'p-4 flex flex-col sm:flex-row sm:items-center gap-3';
+          row.innerHTML = `
+            <div class="flex-1">
+              <div class="font-medium">${it.name}</div>
+              <div class="text-xs text-slate-500">${it.charge === 'monthly' ? 'Mensual' : (it.charge === 'onetime' ? 'Único' : (it.charge === 'hourly-monthly' ? 'Por hora (mensual)' : 'Por hora (único)'))} · ${fmt(it.price)} / ${it.unit}${it.notes ? ' · ' + it.notes : ''}${it.flags.includes('subject') ? ' · Sujeto a aprobación' : ''}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-xs text-slate-500">Cant./Horas</label>
+              <input type="number" min="0" step="1" value="0" data-id="${it.id}" class="w-24 px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>`;
+          list.appendChild(row);
+        });
+
+        sec.appendChild(list);
+        cont.appendChild(sec);
+      });
+
+      // Bind inputs
+      cont.querySelectorAll('input[type=number]').forEach(inp => {
+        inp.addEventListener('input', () => {
+          const id = inp.getAttribute('data-id');
+          const val = Number(inp.value || 0);
+          if (val > 0) state.qty.set(id, val); else state.qty.delete(id);
+          recompute();
+        });
+      });
+    }
+
+    function recompute() {
+      const resumenDiv = document.getElementById('resumenItems');
+      const applySandbox = document.getElementById('chkSandbox').checked;
+      state.applySandbox = applySandbox;
+
+      let monthly = 0, onetime = 0, licenseBase = 0;
+      let monthlyBeforeSSO = 0;
+
+      const rows = [];
+
+      // Build rows for selected items
+      for (const [id, qty] of state.qty.entries()) {
+        const it = CATALOGO.find(x => x.id === id);
+        if (!it) continue;
+        const isHourly = it.charge.startsWith('hourly');
+        const isMonthly = it.charge === 'monthly' || it.charge === 'hourly-monthly';
+        const isOnetime = it.charge === 'onetime' || it.charge === 'hourly-onetime';
+
+        const unitPrice = it.price;
+        const subtotal = unitPrice * qty;
+
+        if (isMonthly) monthly += subtotal;
+        if (isOnetime) onetime += subtotal;
+        if (isMonthly && it.license) licenseBase += subtotal; // base para Sandbox 15%
+
+        // Para el cálculo de SSO gratis necesitamos el mensual antes de SSO
+        if (isMonthly && it.id !== 'addon_sso') monthlyBeforeSSO += subtotal;
+
+        rows.push({
+          id: it.id,
+          name: it.name,
+          tipo: isMonthly ? 'Mensual' : 'Único',
+          qty,
+          unit: isHourly ? 'horas' : 'unid.',
+          price: unitPrice,
+          subtotal,
+        });
+      }
+
+      // SSO gratis si mensual >= 500 MRR
+      const ssoSel = state.qty.get('addon_sso') || 0;
+      let ssoAdj = 0;
+      if (ssoSel > 0 && monthlyBeforeSSO >= 500) {
+        const sso = CATALOGO.find(x => x.id === 'addon_sso');
+        const ssoSub = sso.price * ssoSel;
+        monthly -= ssoSub; // quita costo de SSO
+        ssoAdj = -ssoSub;
+      }
+
+      // Sandbox 15%
+      let sandboxValue = 0;
+      if (applySandbox && licenseBase > 0) {
+        sandboxValue = +(licenseBase * 0.15).toFixed(2);
+        monthly += sandboxValue;
+      }
+
+      // Render resumen simple (primeros 6 items)
+      rows.sort((a,b) => b.subtotal - a.subtotal);
+      resumenDiv.innerHTML = rows.slice(0,6).map(r => `
+        <div class="py-2 flex items-center justify-between">
+          <div class="pr-2">
+            <div class="font-medium">${r.name}</div>
+            <div class="text-xs text-slate-500">${r.tipo} · ${r.qty} ${r.unit} × ${fmt(r.price)}</div>
+          </div>
+          <div class="text-sm font-semibold">${fmt(r.subtotal)}</div>
+        </div>`).join('') + (rows.length > 6 ? `<div class="pt-2 text-xs text-slate-500">+ ${rows.length-6} ítems más…</div>` : (rows.length === 0 ? '<div class="text-slate-500">Sin ítems seleccionados.</div>' : ''));
+
+      // Totales
+      document.getElementById('subMensual').textContent = fmt(Math.max(monthly - sandboxValue, 0));
+      document.getElementById('sandboxRow').textContent = fmt(sandboxValue);
+      document.getElementById('subUnico').textContent = fmt(onetime);
+      document.getElementById('totalPrimerMes').textContent = fmt(monthly + onetime);
+    }
+
+    function generarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      const marginX = 40, marginY = 40;
+      const today = new Date();
+      const fecha = today.toLocaleDateString('es-AR');
+      const cliente = document.getElementById('cliente').value || '—';
+
+      // Recalcular para obtener todas las filas
+      let monthly = 0, onetime = 0, licenseBase = 0, monthlyBeforeSSO = 0;
+      const rows = [];
+      for (const [id, qty] of state.qty.entries()) {
+        const it = CATALOGO.find(x => x.id === id);
+        if (!it) continue;
+        const isHourly = it.charge.startsWith('hourly');
+        const isMonthly = it.charge === 'monthly' || it.charge === 'hourly-monthly';
+        const isOnetime = it.charge === 'onetime' || it.charge === 'hourly-onetime';
+        const unitPrice = it.price;
+        const subtotal = unitPrice * qty;
+        if (isMonthly) monthly += subtotal;
+        if (isOnetime) onetime += subtotal;
+        if (isMonthly && it.license) licenseBase += subtotal;
+        if (isMonthly && it.id !== 'addon_sso') monthlyBeforeSSO += subtotal;
+
+        rows.push([
+          it.category,
+          it.name,
+          isMonthly ? 'Mensual' : 'Único',
+          String(qty),
+          fmt(unitPrice),
+          fmt(subtotal)
+        ]);
+      }
+
+      // SSO ajuste si corresponde
+      let ssoNote = '';
+      const ssoSel = state.qty.get('addon_sso') || 0;
+      if (ssoSel > 0 && monthlyBeforeSSO >= 500) {
+        const sso = CATALOGO.find(x => x.id === 'addon_sso');
+        const ssoSub = sso.price * ssoSel;
+        monthly -= ssoSub;
+        ssoNote = `SSO bonificado por MRR ≥ $500 (−${fmt(ssoSub)})`;
+      }
+
+      // Sandbox 15%
+      let sandboxValue = 0;
+      if (state.applySandbox && licenseBase > 0) {
+        sandboxValue = +(licenseBase * 0.15).toFixed(2);
+        monthly += sandboxValue;
+      }
+
+      // Header
+      doc.setFontSize(18);
+      doc.text('Cotización Numia', marginX, marginY);
+      doc.setFontSize(11);
+      doc.text(`Fecha: ${fecha}`, marginX, marginY + 18);
+      doc.text(`Cliente: ${cliente}`, marginX, marginY + 34);
+
+      // Tabla
+      doc.autoTable({
+        head: [['Categoría', 'Ítem', 'Tipo', 'Cant.', 'Precio unit.', 'Subtotal']],
+        body: rows.length ? rows : [['—','Sin ítems seleccionados','—','—','—','—']],
+        startY: marginY + 50,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [30, 64, 175] },
+        columnStyles: { 0: { cellWidth: 120 }, 1: { cellWidth: 220 } }
+      });
+
+      let y = doc.lastAutoTable ? doc.lastAutoTable.finalY + 12 : marginY + 62;
+      doc.setFontSize(11);
+      doc.text(`Subtotal mensual (sin Sandbox): ${fmt(Math.max(monthly - sandboxValue, 0))}`, marginX, y); y += 16;
+      doc.text(`Sandbox 15% (sobre licencias): ${fmt(sandboxValue)}`, marginX, y); y += 16;
+      if (ssoNote) { doc.text(ssoNote, marginX, y); y += 16; }
+      doc.text(`Subtotal único: ${fmt(onetime)}`, marginX, y); y += 18;
+      doc.setFont(undefined, 'bold');
+      doc.text(`TOTAL PRIMER MES: ${fmt(monthly + onetime)}`, marginX, y); y += 18;
+      doc.setFont(undefined, 'normal');
+
+      // Notas
+      const notas = document.getElementById('notas').value || '';
+      const notasBase = 'Precios en USD. Paquetes marcados como "Sujeto a aprobación" pueden variar. Mínimos de alquiler aplican (24 meses).';
+      const textoNotas = [notasBase, notas].filter(Boolean).join('\n');
+
+      doc.setFontSize(10);
+      doc.text('Notas:', marginX, y);
+      doc.setFontSize(9);
+      doc.text(textoNotas, marginX, y + 14, { maxWidth: 515 });
+
+      const fileName = `Cotizacion_Numia_${today.toISOString().slice(0,10)}.pdf`;
+      doc.save(fileName);
+    }
+
+    // Eventos
+    document.getElementById('chkSandbox').addEventListener('change', recompute);
+    document.getElementById('btnGenerarPDF').addEventListener('click', generarPDF);
+
+    // Init
+    renderCatalog();
+    recompute();
+  </script>
+
+  <div class="JB" >
+
+  <script
+        src="https://cdn.jsdelivr.net/gh/debmedia/numiajb-widget@1.0.4/dist/build/static/js/bundle.min.js">
+    </script>
+    <journey-builder-chat
+        window_title="Asistente de cotizaciones"
+        flow_id="dbd4b2c7-6a04-46a3-b397-7ac27e62cf14"
+        host_url="https://api.journey-builder.desa.numia.co"
+        api_key="sk-rDCkKbYrN6qVvfebL5-2pD9gvmR4WuKyVqHevdqZyXU"
+                chat_position='top-left'>
+    </journey-builder-chat>
+
+    <!--journey-builder-chat
+
+
+          window_title="Asistente de Numiacity"
+    flow_id="73a88122-8b8d-471c-b9f9-72f6820b50a5"
+    host_url="https://journey-builder.desa.numia.co"
+    api_key="sk-rDCkKbYrN6qVvfebL5-2pD9gvmR4WuKyVqHevdqZyXU"
+        chat_position='top-left'
+height=400>
+
+  
+            </journey-builder-chat-->
+
+
+</div>
+</body>
+</html>
