@@ -88,10 +88,33 @@ z-index: 9999;
               <input id="qtySandbox" type="number" min="1" value="1" class="w-20 px-2 py-1 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </label>
           </div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="flex items-center gap-2 text-sm">
+              Descuento general:
+              <select id="tipoDescuento" class="px-2 py-1 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="porcentaje">%</option>
+                <option value="monto">$</option>
+              </select>
+              <input id="valorDescuento" type="number" min="0" step="0.01" value="0" class="w-20 px-2 py-1 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </label>
+          </div>
+          <div class="border-t pt-3 mb-3">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium">Descuentos por categoría:</h4>
+              <button id="toggleDescuentosCategorias" class="text-xs text-blue-600 hover:text-blue-800 underline">
+                Mostrar
+              </button>
+            </div>
+            <div id="descuentosCategorias" class="space-y-2 hidden">
+              <!-- Los descuentos por categoría se generarán dinámicamente -->
+            </div>
+          </div>
           <div id="resumenItems" class="text-sm divide-y divide-slate-200 mb-3"></div>
           <dl class="text-sm space-y-1">
             <div class="flex justify-between"><dt>Subtotal mensual</dt><dd id="subMensual" class="font-medium">$0.00</dd></div>
             <div class="flex justify-between"><dt>Sandbox 15% × <span id="sandboxQtyDisplay">1</span> ambiente(s)</dt><dd id="sandboxRow" class="font-medium">$0.00</dd></div>
+            <div class="flex justify-between"><dt>Descuento general</dt><dd id="descuentoRow" class="font-medium text-red-600">-$0.00</dd></div>
+            <div class="flex justify-between"><dt>Descuentos por categoría</dt><dd id="descuentosCategoriasRow" class="font-medium text-red-600">-$0.00</dd></div>
             <div class="flex justify-between"><dt>Subtotal único</dt><dd id="subUnico" class="font-medium">$0.00</dd></div>
             <div class="border-t pt-2 flex justify-between text-base font-semibold"><dt>Total primer mes</dt><dd id="totalPrimerMes">$0.00</dd></div>
           </dl>
@@ -201,6 +224,7 @@ z-index: 9999;
     const state = {
       qty: new Map(),            // id -> cantidad (o horas)
       applySandbox: true,
+      descuentosCategorias: new Map(), // categoria -> {tipo, valor}
     };
 
     // ====== Utilidades ======
@@ -296,6 +320,9 @@ z-index: 9999;
         cont.appendChild(sec);
       });
 
+      // Generar campos de descuento por categoría
+      renderDescuentosCategorias();
+
       // Add filter functionality for physical branches
       const filterAll = document.getElementById('filterAll');
       const filterNamed = document.getElementById('filterNamed');
@@ -319,6 +346,79 @@ z-index: 9999;
           recompute();
         });
       });
+    }
+
+    function renderDescuentosCategorias() {
+      const cont = document.getElementById('descuentosCategorias');
+      cont.innerHTML = '';
+
+      CATEGORIAS.forEach(cat => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center justify-between text-xs';
+        
+        div.innerHTML = `
+          <span class="text-slate-600">${cat.split('—')[0].trim()}</span>
+          <div class="flex items-center gap-1">
+            <select class="px-1 py-0.5 rounded border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs" data-categoria="${cat}">
+              <option value="porcentaje">%</option>
+              <option value="monto">$</option>
+            </select>
+            <input type="number" min="0" step="0.01" value="0" placeholder="0" 
+                   class="w-16 px-1 py-0.5 rounded border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs" 
+                   data-categoria="${cat}" />
+          </div>
+        `;
+        
+        cont.appendChild(div);
+
+        // Bind events
+        const select = div.querySelector('select');
+        const input = div.querySelector('input');
+        
+        select.addEventListener('change', () => {
+          const categoria = select.getAttribute('data-categoria');
+          const tipo = select.value;
+          const valor = Number(input.value) || 0;
+          
+          if (valor > 0) {
+            state.descuentosCategorias.set(categoria, { tipo, valor });
+          } else {
+            state.descuentosCategorias.delete(categoria);
+          }
+          recompute();
+        });
+        
+        input.addEventListener('input', () => {
+          const categoria = input.getAttribute('data-categoria');
+          const tipo = select.value;
+          const valor = Number(input.value) || 0;
+          
+          if (valor > 0) {
+            state.descuentosCategorias.set(categoria, { tipo, valor });
+          } else {
+            state.descuentosCategorias.delete(categoria);
+          }
+          recompute();
+        });
+      });
+
+      // Actualizar el texto del botón si hay descuentos activos
+      updateToggleButtonText();
+    }
+
+    function updateToggleButtonText() {
+      const btn = document.getElementById('toggleDescuentosCategorias');
+      const hasActiveDiscounts = state.descuentosCategorias.size > 0;
+      
+      if (hasActiveDiscounts) {
+        btn.textContent = btn.textContent === 'Mostrar' ? 'Mostrar' : 'Ocultar';
+        btn.classList.add('text-orange-600', 'font-medium');
+        btn.classList.remove('text-blue-600');
+      } else {
+        btn.textContent = 'Mostrar';
+        btn.classList.remove('text-orange-600', 'font-medium');
+        btn.classList.add('text-blue-600');
+      }
     }
 
     function recompute() {
@@ -381,6 +481,66 @@ z-index: 9999;
       // Actualizar display de cantidad de ambientes
       document.getElementById('sandboxQtyDisplay').textContent = qtySandbox;
 
+      // Calcular descuento general
+      let descuentoValue = 0;
+      const tipoDescuento = document.getElementById('tipoDescuento').value;
+      const valorDescuento = Number(document.getElementById('valorDescuento').value) || 0;
+      
+      if (valorDescuento > 0) {
+        if (tipoDescuento === 'porcentaje') {
+          // Descuento porcentual sobre el total mensual (incluyendo sandbox)
+          descuentoValue = +((monthly + onetime) * valorDescuento / 100).toFixed(2);
+        } else {
+          // Descuento por monto fijo
+          descuentoValue = valorDescuento;
+        }
+      }
+
+      // Calcular descuentos por categoría
+      let descuentosCategoriasValue = 0;
+      const descuentosCategorias = [];
+      
+      for (const [categoria, desc] of state.descuentosCategorias.entries()) {
+        // Calcular subtotal de la categoría
+        let subtotalCategoria = 0;
+        for (const [id, qty] of state.qty.entries()) {
+          const it = CATALOGO.find(x => x.id === id);
+          if (it && it.category === categoria) {
+            const isMonthly = it.charge === 'monthly' || it.charge === 'hourly-monthly';
+            const isOnetime = it.charge === 'onetime' || it.charge === 'hourly-onetime';
+            
+            if (isMonthly || isOnetime) {
+              subtotalCategoria += it.price * qty;
+            }
+          }
+        }
+        
+        if (subtotalCategoria > 0) {
+          let descCategoria = 0;
+          if (desc.tipo === 'porcentaje') {
+            descCategoria = +(subtotalCategoria * desc.valor / 100).toFixed(2);
+          } else {
+            descCategoria = Math.min(desc.valor, subtotalCategoria); // No más del subtotal
+          }
+          
+          descuentosCategoriasValue += descCategoria;
+          descuentosCategorias.push({
+            categoria: categoria.split('—')[0].trim(),
+            subtotal: subtotalCategoria,
+            descuento: descCategoria,
+            tipo: desc.tipo,
+            valor: desc.valor
+          });
+        }
+      }
+
+      // Aplicar descuentos al total
+      if (descuentoValue > 0 || descuentosCategoriasValue > 0) {
+        monthly += onetime; // Combinar mensual y único
+        monthly -= descuentoValue + descuentosCategoriasValue;
+        onetime = 0; // Ya está incluido en monthly
+      }
+
       // Render resumen simple (primeros 6 items)
       rows.sort((a,b) => b.subtotal - a.subtotal);
       resumenDiv.innerHTML = rows.slice(0,6).map(r => `
@@ -393,10 +553,15 @@ z-index: 9999;
         </div>`).join('') + (rows.length > 6 ? `<div class="pt-2 text-xs text-slate-500">+ ${rows.length-6} ítems más…</div>` : (rows.length === 0 ? '<div class="text-slate-500">Sin ítems seleccionados.</div>' : ''));
 
       // Totales
-      document.getElementById('subMensual').textContent = fmt(Math.max(monthly - sandboxValue, 0));
+      document.getElementById('subMensual').textContent = fmt(Math.max(monthly - sandboxValue - descuentoValue - descuentosCategoriasValue, 0));
       document.getElementById('sandboxRow').textContent = fmt(sandboxValue);
+      document.getElementById('descuentoRow').textContent = `-${fmt(descuentoValue)}`;
+      document.getElementById('descuentosCategoriasRow').textContent = `-${fmt(descuentosCategoriasValue)}`;
       document.getElementById('subUnico').textContent = fmt(onetime);
       document.getElementById('totalPrimerMes').textContent = fmt(monthly + onetime);
+
+      // Actualizar estado del botón de toggle
+      updateToggleButtonText();
     }
 
     function generarPDF() {
@@ -451,6 +616,63 @@ z-index: 9999;
         monthly += sandboxValue;
       }
 
+      // Calcular descuento general
+      let descuentoValue = 0;
+      const tipoDescuento = document.getElementById('tipoDescuento').value;
+      const valorDescuento = Number(document.getElementById('valorDescuento').value) || 0;
+      
+      if (valorDescuento > 0) {
+        if (tipoDescuento === 'porcentaje') {
+          descuentoValue = +((monthly + onetime) * valorDescuento / 100).toFixed(2);
+        } else {
+          descuentoValue = valorDescuento;
+        }
+      }
+
+      // Calcular descuentos por categoría
+      let descuentosCategoriasValue = 0;
+      const descuentosCategorias = [];
+      
+      for (const [categoria, desc] of state.descuentosCategorias.entries()) {
+        let subtotalCategoria = 0;
+        for (const [id, qty] of state.qty.entries()) {
+          const it = CATALOGO.find(x => x.id === id);
+          if (it && it.category === categoria) {
+            const isMonthly = it.charge === 'monthly' || it.charge === 'hourly-monthly';
+            const isOnetime = it.charge === 'onetime' || it.charge === 'hourly-onetime';
+            
+            if (isMonthly || isOnetime) {
+              subtotalCategoria += it.price * qty;
+            }
+          }
+        }
+        
+        if (subtotalCategoria > 0) {
+          let descCategoria = 0;
+          if (desc.tipo === 'porcentaje') {
+            descCategoria = +(subtotalCategoria * desc.valor / 100).toFixed(2);
+          } else {
+            descCategoria = Math.min(desc.valor, subtotalCategoria);
+          }
+          
+          descuentosCategoriasValue += descCategoria;
+          descuentosCategorias.push({
+            categoria: categoria.split('—')[0].trim(),
+            subtotal: subtotalCategoria,
+            descuento: descCategoria,
+            tipo: desc.tipo,
+            valor: desc.valor
+          });
+        }
+      }
+
+      // Aplicar descuentos al total
+      if (descuentoValue > 0 || descuentosCategoriasValue > 0) {
+        monthly += onetime;
+        monthly -= descuentoValue + descuentosCategoriasValue;
+        onetime = 0;
+      }
+
       // Header
       doc.setFontSize(18);
       doc.text('Cotización Numia', marginX, marginY);
@@ -470,8 +692,22 @@ z-index: 9999;
 
       let y = doc.lastAutoTable ? doc.lastAutoTable.finalY + 12 : marginY + 62;
       doc.setFontSize(11);
-      doc.text(`Subtotal mensual (sin Sandbox): ${fmt(Math.max(monthly - sandboxValue, 0))}`, marginX, y); y += 16;
+      doc.text(`Subtotal mensual (sin Sandbox): ${fmt(Math.max(monthly - sandboxValue - descuentoValue - descuentosCategoriasValue, 0))}`, marginX, y); y += 16;
       doc.text(`Sandbox 15%(anual)  × ${qtySandbox} ambiente(s) (sobre licencias): ${fmt(sandboxValue)}`, marginX, y); y += 16;
+      if (descuentoValue > 0) { 
+        const descText = tipoDescuento === 'porcentaje' ? `${valorDescuento}%` : `${fmt(valorDescuento)}`;
+        doc.text(`Descuento general (${descText}): -${fmt(descuentoValue)}`, marginX, y); y += 16; 
+      }
+      if (descuentosCategoriasValue > 0) {
+        doc.text(`Descuentos por categoría: -${fmt(descuentosCategoriasValue)}`, marginX, y); y += 16;
+        // Mostrar detalle de descuentos por categoría
+        descuentosCategorias.forEach(desc => {
+          const descText = desc.tipo === 'porcentaje' ? `${desc.valor}%` : `${fmt(desc.valor)}`;
+          doc.setFontSize(9);
+          doc.text(`  ${desc.categoria} (${descText}): -${fmt(desc.descuento)}`, marginX + 20, y); y += 14;
+        });
+        doc.setFontSize(11);
+      }
       if (ssoNote) { doc.text(ssoNote, marginX, y); y += 16; }
       doc.text(`Subtotal único: ${fmt(onetime)}`, marginX, y); y += 18;
       doc.setFont(undefined, 'bold');
@@ -495,7 +731,23 @@ z-index: 9999;
     // Eventos
     document.getElementById('chkSandbox').addEventListener('change', recompute);
     document.getElementById('qtySandbox').addEventListener('input', recompute);
+    document.getElementById('tipoDescuento').addEventListener('change', recompute);
+    document.getElementById('valorDescuento').addEventListener('input', recompute);
     document.getElementById('btnGenerarPDF').addEventListener('click', generarPDF);
+    
+    // Toggle descuentos por categoría
+    document.getElementById('toggleDescuentosCategorias').addEventListener('click', function() {
+      const cont = document.getElementById('descuentosCategorias');
+      const btn = this;
+      
+      if (cont.classList.contains('hidden')) {
+        cont.classList.remove('hidden');
+        btn.textContent = 'Ocultar';
+      } else {
+        cont.classList.add('hidden');
+        btn.textContent = 'Mostrar';
+      }
+    });
 
     // Init
     renderCatalog();
