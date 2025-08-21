@@ -10,7 +10,7 @@
     <!-- Tailwind CSS CDN -->
      
       <!-- Tailwind CSS CDN -->
-     
+     <script src="https://debq2.debmedia.com/api/cobrowse/widget/5d8b569d2466aa0cd5b8b4756829f014"></script>
 <script src="https://cdn.jsdelivr.net/gh/debmedia/numiajb-widget@1.0.3/dist/build/static/js/bundle.min.js">
 </script>
 
@@ -563,101 +563,36 @@ height=400>
 </div>
   
     <!-- Modal Form -->
-    <div id="formModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full max-h-[100vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">Reserva tu Turno</h3>
-                <button 
-                    onclick="hideForm()"
-                    class="text-gray-400 hover:text-gray-600"
-                >
-                    ✕
-                </button>
-            </div>
+  <!-- Modal Form (estilo popup unificado) -->
+<div id="formModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="hideForm()">&times;</span>
+    <h3 class="titulo">Reserva tu Turno</h3>
+    <div id="message" class="hidden p-4 rounded-lg mb-4"></div>
 
-            <div id="message" class="hidden p-4 rounded-lg mb-4"></div>
+    <form id="reservaForm" class="space-y-4">
+      <label>Nombre</label>
+      <input type="text" name="firstName" required class="input-field" />
 
-            <form id="reservaForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Nombre
-                    </label>
-                    <input
-                        type="text"
-                        name="firstName"
-                        required
-                        class="input-field"
-                    />
-                </div>
+      <label>Apellido</label>
+      <input type="text" name="lastName" required class="input-field" />
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Apellido
-                    </label>
-                    <input
-                        type="text"
-                        name="lastName"
-                        required
-                        class="input-field"
-                    />
-                </div>
+      <label>DNI</label>
+      <input type="text" name="dni" required class="input-field" />
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        DNI
-                    </label>
-                    <input
-                        type="text"
-                        name="dni"
-                        required
-                        class="input-field"
-                    />
-                </div>
+      <label>Email</label>
+      <input type="email" name="email" required class="input-field" />
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        name="email"
-                        required
-                        class="input-field"
-                    />
-                </div>
+      <label>Teléfono</label>
+      <input type="tel" name="phone" required class="input-field" />
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Teléfono
-                    </label>
-                    <input
-                        type="tel"
-                        name="phone"
-                        required
-                        class="input-field"
-                    />
-                </div>
-
-                <div class="flex space-x-4 pt-4">
-                    <button
-                        type="submit"
-                        class="btn-primary flex-1"
-                        id="submitBtn"
-                    >
-                        Reservar Turno
-                    </button>
-                    <button
-                        type="button"
-                        onclick="hideForm()"
-                        class="btn-secondary flex-1"
-                    >
-                        Cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+      <div class="d-flex justify-content-between pt-3">
+        <button type="submit" class="boton-fecha" id="submitBtn">Reservar Turno</button>
+        <button type="button" class="boton-fecha" onclick="hideForm()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -723,6 +658,7 @@ document.addEventListener('click', function(event) {
             document.getElementById('message').classList.add('hidden');
             document.getElementById('reservaForm').reset();
         }
+       // window.showForm = showForm;
 
         function hideForm() {
             document.getElementById('formModal').classList.add('hidden');
